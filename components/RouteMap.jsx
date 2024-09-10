@@ -1,62 +1,45 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  Image,
-  FlatList,
-} from "react-native";
-import React from "react";
-import MapView, {
-  PROVIDER_GOOGLE,
-  PROVIDER_DEFAULT,
-  Marker,
-} from "react-native-maps";
-import cars from "../assets/data/cars";
+import React, { useRef, useEffect } from "react";
+import { View, Image, Platform, StyleSheet } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE, PROVIDER_DEFAULT } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-// import { GOOGLE_MAPS_API_KEY } from "@env";
-const GOOGLE_MAPS_API_KEY = "AIzaSyDdUQ1EIQJB46n2RSusQro1qP3Pd4mGZcA"
 
-const RouteMap = ({origin,destination}) => {
- 
+const GOOGLE_MAPS_API_KEY = "AIzaSyDdUQ1EIQJB46n2RSusQro1qP3Pd4mGZcA";
 
-  // console.log("olocal: " + originloc.latitude)
-  // console.log("dlocal: " + destinationloc)
+const RouteMap = ({ origin, destination }) => {
+  const mapRef = useRef(null);
+
   const originloc = {
     latitude: origin.details.geometry.location.lat,
     longitude: origin.details.geometry.location.lng,
   };
+
   const destinationloc = {
     latitude: destination.details.geometry.location.lat,
     longitude: destination.details.geometry.location.lng,
   };
-  // const origin = {
-  //   latitude: 28.450627,
-  //   longitude: -16.263045,
-  // };
-  // const destination = {
-  //   latitude: 28.460128,
-  //   longitude: -16.259929,
-  // };
+
+  // Zoom and focus to the selected origin and destination coordinates
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.fitToCoordinates([originloc, destinationloc], {
+        edgePadding: {
+          top: 50,
+          right: 50,
+          bottom: 50,
+          left: 50,
+        },
+        animated: true,
+      });
+    }
+  }, [originloc, destinationloc]);
+
   return (
     <MapView
+      ref={mapRef}
       provider={Platform.OS === "android" ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
       className="h-full w-full"
       showsUserLocation={true}
-      // showsBuildings
       mapType="mutedStandard"
-      // region={{
-      //   latitude: 28.450627,
-      //   longitude: -16.263045,
-      //   latitudeDelta: 0.0022,
-      //   longitudeDelta: 0.0121,
-      // }}
-      // initialRegion={{
-      //   latitude: 28.450627,
-      //   longitude: -16.266745,
-      //   latitudeDelta: 0.0022,
-      //   longitudeDelta: 0.0121,
-      // }}
     >
       <MapViewDirections
         origin={originloc}
@@ -65,22 +48,40 @@ const RouteMap = ({origin,destination}) => {
         strokeWidth={5}
         strokeColor="black"
       />
-      <Marker
-    //   key={}
-      coordinate={origin}
-      title=""
-      description=""
-      />
-      <Marker
-    //   key={}
-      coordinate={destination}
-      title=""
-      description=""
-      />
+      {originloc?.latitude != null && (
+        <Marker coordinate={originloc} anchor={{ x: 0.5, y: 0.5 }}>
+          <Image
+            source={require("../assets/loc1.png")}
+            className="object-contain h-16 w-16"
+            style={styles.markerDestination}
+            resizeMode="cover"
+          />
+        </Marker>
+      )}
+      {destinationloc?.latitude != null && (
+        <Marker coordinate={destinationloc} anchor={{ x: 0.5, y: 0.5 }}>
+          <Image
+            source={require("../assets/loc2.png")}
+            className="object-contain h-16 w-16"
+            style={styles.markerOrigin2}
+            resizeMode="cover"
+          />
+        </Marker>
+      )}
     </MapView>
   );
 };
 
 export default RouteMap;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  markerDestination: {
+    width: 16,
+    height: 16,
+  },
+  markerOrigin2: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+});

@@ -125,7 +125,7 @@ const DestinationSearch = () => {
             userLocation={true}
             fetchDetails={true}
             query={{
-              key: "AIzaSyDdUQ1EIQJB46n2RSusQro1qP3Pd4mGZcA",
+              key: "your key",
               language: "en",
             //   location: currentLocation ? `${currentLocation.latitude},${currentLocation.longitude}` : null,
             // radius: 50000,
@@ -158,7 +158,7 @@ const DestinationSearch = () => {
           }}
           fetchDetails={true}
           query={{
-            key: 'AIzaSyDdUQ1EIQJB46n2RSusQro1qP3Pd4mGZcA',
+            key: 'your key',
             language: 'en',
           }}
           renderRow={(data) => <PlaceRowd data={data} />}
